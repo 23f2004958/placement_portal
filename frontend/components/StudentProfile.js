@@ -54,18 +54,28 @@ window.StudentProfileComponent = {
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-secondary fw-semibold small">Contact Phone (10 digits) *</label>
-                    <input type="tel" class="form-control" v-model="profile.phone" required placeholder="9876543210">
+                    <input type="tel" class="form-control" v-model="profile.phone" required placeholder=" ">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label text-secondary fw-semibold small">LinkedIn Profile URL</label>
-                    <input type="url" class="form-control" v-model="profile.linkedin_url" placeholder="https://linkedin.com/in/username">
+                    <input type="url" class="form-control" v-model="profile.linkedin_url" placeholder=" ">
                   </div>
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label text-secondary fw-semibold small">Skills (Comma-separated tags)</label>
-                  <input type="text" class="form-control" v-model="profile.skills" placeholder="Python, Flask, JavaScript, SQL">
+                  <input type="text" class="form-control" v-model="profile.skills" placeholder=" ">
                   <div class="form-text small">Enter skills separated by commas. They will display as tags in your resume summary.</div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label text-secondary fw-semibold small">Education Details *</label>
+                  <textarea class="form-control" rows="3" v-model="profile.education" required placeholder="Describe your academic degrees, schools, and years..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label text-secondary fw-semibold small">Experience Details *</label>
+                  <textarea class="form-control" rows="3" v-model="profile.experience" required placeholder="Describe your internships, projects, or work history..."></textarea>
                 </div>
 
                 <!-- Resume Upload Section -->
@@ -125,7 +135,9 @@ window.StudentProfileComponent = {
         branch: '',
         year: 1,
         cgpa: 0,
-        roll_number: ''
+        roll_number: '',
+        education: '',
+        experience: ''
       },
       studentName: '',
       loading: false,
@@ -154,7 +166,9 @@ window.StudentProfileComponent = {
             branch: p.branch,
             year: p.year,
             cgpa: p.cgpa,
-            roll_number: p.roll_number
+            roll_number: p.roll_number,
+            education: p.education || '',
+            experience: p.experience || ''
           };
         }
       })
@@ -171,12 +185,18 @@ window.StudentProfileComponent = {
         this.error = 'Phone number must be exactly 10 digits.';
         return;
       }
+      if (!this.profile.education || !this.profile.experience) {
+        this.error = 'Education and experience fields are required.';
+        return;
+      }
 
       this.loading = true;
       axios.put('/api/student/profile', {
         phone: this.profile.phone,
         linkedin_url: this.profile.linkedin_url,
-        skills: this.profile.skills
+        skills: this.profile.skills,
+        education: this.profile.education,
+        experience: this.profile.experience
       })
       .then(() => {
         this.success = true;

@@ -57,7 +57,7 @@ window.LoginComponent = {
                   type="email" 
                   class="form-control" 
                   id="loginEmail" 
-                  placeholder="name@example.com" 
+                  placeholder=" " 
                   v-model="email" 
                   required
                   style="border-radius: 8px;"
@@ -69,7 +69,7 @@ window.LoginComponent = {
                   type="password" 
                   class="form-control" 
                   id="loginPassword" 
-                  placeholder="Password" 
+                  placeholder=" " 
                   v-model="password" 
                   required
                   style="border-radius: 8px;"

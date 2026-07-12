@@ -25,7 +25,7 @@ window.CreateDriveComponent = {
           <form @submit.prevent="handleSubmit" class="needs-validation" novalidate v-if="!successMsg">
             <div class="mb-3">
               <label class="form-label text-secondary fw-semibold small">Job Title *</label>
-              <input type="text" class="form-control" v-model="form.job_title" required placeholder="Software Engineer (Backend)">
+              <input type="text" class="form-control" v-model="form.job_title" required placeholder=" ">
             </div>
 
             <div class="mb-3">
@@ -47,7 +47,7 @@ window.CreateDriveComponent = {
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Minimum CGPA (0.0-10.0) *</label>
-                <input type="number" step="0.1" min="0" max="10" class="form-control" v-model.number="form.min_cgpa" required placeholder="7.5">
+                <input type="number" step="0.1" min="0" max="10" class="form-control" v-model.number="form.min_cgpa" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Eligible Year *</label>
@@ -64,7 +64,7 @@ window.CreateDriveComponent = {
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Package Offered (in LPA) *</label>
-                <input type="number" step="0.1" min="0.1" class="form-control" v-model.number="form.package_lpa" required placeholder="12.5">
+                <input type="number" step="0.1" min="0.1" class="form-control" v-model.number="form.package_lpa" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Tentative Drive Date (Optional)</label>

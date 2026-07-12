@@ -30,29 +30,29 @@ window.RegisterComponent = {
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Full Name *</label>
-                <input type="text" class="form-control" v-model="student.name" required placeholder="John Doe">
+                <input type="text" class="form-control" v-model="student.name" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Work/Personal Email *</label>
-                <input type="email" class="form-control" v-model="student.email" required placeholder="john@example.com">
+                <input type="email" class="form-control" v-model="student.email" required placeholder=" ">
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Password * (Min 8 chars)</label>
-                <input type="password" class="form-control" v-model="student.password" required placeholder="••••••••">
+                <input type="password" class="form-control" v-model="student.password" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Confirm Password *</label>
-                <input type="password" class="form-control" v-model="student.confirm_password" required placeholder="••••••••">
+                <input type="password" class="form-control" v-model="student.confirm_password" required placeholder=" ">
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Roll Number *</label>
-                <input type="text" class="form-control" v-model="student.roll_number" required placeholder="CS23B101">
+                <input type="text" class="form-control" v-model="student.roll_number" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Branch *</label>
@@ -71,15 +71,15 @@ window.RegisterComponent = {
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Current Year (1-4) *</label>
-                <input type="number" class="form-control" min="1" max="4" v-model.number="student.year" required placeholder="3">
+                <input type="number" class="form-control" min="1" max="4" v-model.number="student.year" required placeholder=" ">
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">CGPA (0.0-10.0) *</label>
-                <input type="number" step="0.01" min="0" max="10" class="form-control" v-model.number="student.cgpa" required placeholder="8.5">
+                <input type="number" step="0.01" min="0" max="10" class="form-control" v-model.number="student.cgpa" required placeholder=" ">
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Phone (10 digits) *</label>
-                <input type="tel" class="form-control" v-model="student.phone" required placeholder="9876543210">
+                <input type="tel" class="form-control" v-model="student.phone" required placeholder=" ">
               </div>
             </div>
 
@@ -99,44 +99,44 @@ window.RegisterComponent = {
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Contact Person Name *</label>
-                <input type="text" class="form-control" v-model="company.name" required placeholder="Jane Smith">
+                <input type="text" class="form-control" v-model="company.name" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Work Email *</label>
-                <input type="email" class="form-control" v-model="company.email" required placeholder="hr@company.com">
+                <input type="email" class="form-control" v-model="company.email" required placeholder=" ">
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Password * (Min 8 chars)</label>
-                <input type="password" class="form-control" v-model="company.password" required placeholder="••••••••">
+                <input type="password" class="form-control" v-model="company.password" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Confirm Password *</label>
-                <input type="password" class="form-control" v-model="company.confirm_password" required placeholder="••••••••">
+                <input type="password" class="form-control" v-model="company.confirm_password" required placeholder=" ">
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Company Name *</label>
-                <input type="text" class="form-control" v-model="company.company_name" required placeholder="Acme Corp">
+                <input type="text" class="form-control" v-model="company.company_name" required placeholder=" ">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label text-secondary fw-semibold small">HR Contact Number *</label>
-                <input type="tel" class="form-control" v-model="company.hr_contact" required placeholder="9876543210">
+                <input type="tel" class="form-control" v-model="company.hr_contact" required placeholder=" ">
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Website URL *</label>
-                <input type="url" class="form-control" v-model="company.website" required placeholder="https://acme.corp">
+                <input type="url" class="form-control" v-model="company.website" required placeholder=" ">
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Location *</label>
-                <input type="text" class="form-control" v-model="company.location" required placeholder="Mumbai, India">
+                <input type="text" class="form-control" v-model="company.location" required placeholder=" ">
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label text-secondary fw-semibold small">Industry *</label>

@@ -46,18 +46,18 @@ window.CompanyProfileComponent = {
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label text-secondary fw-semibold small">HR Contact Number *</label>
-                <input type="tel" class="form-control" v-model="profile.hr_contact" required placeholder="9876543210">
+                <input type="tel" class="form-control" v-model="profile.hr_contact" required placeholder=" ">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-secondary fw-semibold small">Website URL *</label>
-                <input type="url" class="form-control" v-model="profile.website" required placeholder="https://example.com">
+                <input type="url" class="form-control" v-model="profile.website" required placeholder=" ">
               </div>
             </div>
 
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label text-secondary fw-semibold small">Location *</label>
-                <input type="text" class="form-control" v-model="profile.location" required placeholder="Mumbai, India">
+                <input type="text" class="form-control" v-model="profile.location" required placeholder=" ">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-secondary fw-semibold small">Industry *</label>
