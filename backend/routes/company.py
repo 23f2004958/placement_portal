@@ -159,27 +159,46 @@ def create_drive():
 
     data = request.get_json() or {}
     
-    required_fields = ['title', 'description', 'eligible_branches', 'min_cgpa', 'eligible_year', 'salary', 'deadline']
-    for field in required_fields:
-        if not data.get(field):
-            return jsonify({"success": False, "error": f"{field.replace('_', ' ').capitalize()} is required"}), 400
+    # Map V1 keys to V2 keys for compatibility with frontend components
+    title = data.get('title') or data.get('job_title')
+    description = data.get('description') or data.get('job_description')
+    salary_val = data.get('salary') or data.get('package_lpa')
+    deadline_val = data.get('deadline') or data.get('application_deadline')
+    eligible_branches = data.get('eligible_branches')
+    min_cgpa_val = data.get('min_cgpa')
+    eligible_year_val = data.get('eligible_year')
+
+    if not title:
+        return jsonify({"success": False, "error": "Title is required"}), 400
+    if not description:
+        return jsonify({"success": False, "error": "Description is required"}), 400
+    if not eligible_branches:
+        return jsonify({"success": False, "error": "Eligible branches are required"}), 400
+    if min_cgpa_val is None or min_cgpa_val == '':
+        return jsonify({"success": False, "error": "Min CGPA is required"}), 400
+    if eligible_year_val is None or eligible_year_val == '':
+        return jsonify({"success": False, "error": "Eligible year is required"}), 400
+    if salary_val is None or salary_val == '':
+        return jsonify({"success": False, "error": "Salary is required"}), 400
+    if not deadline_val:
+        return jsonify({"success": False, "error": "Deadline is required"}), 400
 
     try:
-        min_cgpa = float(data['min_cgpa'])
+        min_cgpa = float(min_cgpa_val)
         if min_cgpa < 0.0 or min_cgpa > 10.0:
             return jsonify({"success": False, "error": "Minimum CGPA must be between 0.0 and 10.0"}), 400
     except ValueError:
         return jsonify({"success": False, "error": "Minimum CGPA must be a valid decimal number"}), 400
 
     try:
-        salary = float(data['salary'])
+        salary = float(salary_val)
         if salary <= 0:
             return jsonify({"success": False, "error": "Salary must be a positive number"}), 400
     except ValueError:
         return jsonify({"success": False, "error": "Salary must be a valid number"}), 400
 
     try:
-        deadline = parse_datetime(data['deadline'])
+        deadline = parse_datetime(deadline_val)
         if deadline <= datetime.utcnow():
             return jsonify({"success": False, "error": "Application deadline must be a future date"}), 400
     except ValueError as e:
@@ -193,10 +212,10 @@ def create_drive():
             return jsonify({"success": False, "error": str(e)}), 400
 
     try:
-        if str(data['eligible_year']).lower() == 'all':
+        if str(eligible_year_val).lower() == 'all':
             eligible_year = 0
         else:
-            eligible_year = int(data['eligible_year'])
+            eligible_year = int(eligible_year_val)
             if eligible_year < 1 or eligible_year > 4:
                 return jsonify({"success": False, "error": "Eligible year must be 1-4 or 'All'"}), 400
     except ValueError:
@@ -204,9 +223,9 @@ def create_drive():
 
     new_drive = PlacementDrive(
         company_id=cp.id,
-        title=data['title'],
-        description=data['description'],
-        eligible_branches=data['eligible_branches'],
+        title=title,
+        description=description,
+        eligible_branches=eligible_branches,
         min_cgpa=min_cgpa,
         eligible_year=eligible_year,
         salary=salary,
