@@ -4,63 +4,13 @@ window.LoginComponent = {
       <div class="card shadow-lg border-0" style="max-width: 960px; width: 100%; border-radius: 20px; overflow: hidden;">
         <div class="row g-0">
           
-          <!-- Left side: Marketing panel (hidden on mobile, show on large) -->
-          <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-between p-5 text-white" 
+          <!-- Left side: Clean minimal brand panel (hidden on mobile) -->
+          <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center p-5 text-white text-center" 
                style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
-            <div>
-              <div class="d-flex align-items-center gap-2 mb-4">
-                <i class="bi bi-mortarboard-fill text-primary fs-2"></i>
-                <span class="fs-4 fw-bold">PPA <span class="text-primary">Cell</span></span>
-              </div>
-              <h2 class="fw-bold mb-3" style="line-height: 1.3;">Institute Recruitment & Placement Hub</h2>
-              <p class="text-white text-opacity-75 mb-4">Connecting IIT-M students with leading recruitment partners for summer internships and final placements.</p>
-              
-              <div class="d-flex flex-column gap-3 mb-4">
-                <div class="d-flex align-items-start gap-3">
-                  <div class="bg-primary bg-opacity-20 text-primary rounded p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                    <i class="bi bi-rocket-takeoff-fill"></i>
-                  </div>
-                  <div>
-                    <h6 class="fw-bold mb-1">Instant Drive Discovery</h6>
-                    <p class="text-white text-opacity-50 small mb-0">Browse drives filtered dynamically by your CGPA and branch eligibility.</p>
-                  </div>
-                </div>
-                
-                <div class="d-flex align-items-start gap-3">
-                  <div class="bg-primary bg-opacity-20 text-primary rounded p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                    <i class="bi bi-shield-check"></i>
-                  </div>
-                  <div>
-                    <h6 class="fw-bold mb-1">Gated Registrations</h6>
-                    <p class="text-white text-opacity-50 small mb-0">Admin approved recruiter accounts ensure verified drive listings.</p>
-                  </div>
-                </div>
-                
-                <div class="d-flex align-items-start gap-3">
-                  <div class="bg-primary bg-opacity-20 text-primary rounded p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                    <i class="bi bi-file-earmark-pdf-fill"></i>
-                  </div>
-                  <div>
-                    <h6 class="fw-bold mb-1">Automated Placements</h6>
-                    <p class="text-white text-opacity-50 small mb-0">Instant placement logging, status trackers, and offer downloads.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="border-top border-white border-opacity-10 pt-4 d-flex justify-content-between align-items-center">
-              <div>
-                <span class="d-block fw-bold fs-5 text-primary">150+</span>
-                <span class="text-white text-opacity-50 small">Recruiters</span>
-              </div>
-              <div>
-                <span class="d-block fw-bold fs-5 text-primary">98%</span>
-                <span class="text-white text-opacity-50 small">Placement Rate</span>
-              </div>
-              <div>
-                <span class="d-block fw-bold fs-5 text-primary">Celery</span>
-                <span class="text-white text-opacity-50 small">Background Jobs</span>
-              </div>
+            <div class="d-flex flex-column align-items-center gap-3">
+              <i class="bi bi-mortarboard-fill text-primary" style="font-size: 3.5rem;"></i>
+              <h1 class="fw-bold mb-1" style="font-size: 2.5rem; letter-spacing: -0.5px;">PPA <span class="text-primary">Cell</span></h1>
+              <p class="text-white text-opacity-75 fs-5 mb-0" style="font-weight: 300;">Institute Recruitment & Placement Hub</p>
             </div>
           </div>
 
