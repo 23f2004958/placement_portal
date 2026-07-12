@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Institute Placement Portal</title>
+  
+  <!-- Google Fonts: Outfit (headings) & Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Premium Custom Styling (Vanilla CSS) -->
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --dark-navy: #0f172a;
+      --bg-light: #f8fafc;
+      --text-main: #1e293b;
+      --font-headings: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-column: justify;
+    }
+    
+    h1, h2, h3, h4, h5, h6, .navbar-brand {
+      font-family: var(--font-headings);
+    }
+    
+    .navbar {
+      background-color: var(--dark-navy) !important;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15);
+    }
+    
+    .navbar-brand {
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-size: 1.4rem;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      transition: color 0.2s, transform 0.2s;
+    }
+    
+    .nav-link:hover {
+      transform: translateY(-1px);
+    }
+    
+    .navbar-dark .navbar-nav .nav-link.active {
+      color: #3b82f6 !important;
+      font-weight: 600;
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      transition: background-color 0.2s, transform 0.2s;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    
+    /* Notification bell dot styling */
+    .notif-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 4px 6px;
+      border-radius: 50%;
+      font-size: 0.65rem;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column">
+  
+  <div id="app" class="flex-grow-1 d-flex flex-column">
+    {% raw %}
+    <!-- Role-Aware Shared Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark py-3" v-if="isLoggedIn">
+      <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" :href="getHomeHash()">
+          <i class="bi bi-mortarboard-fill text-primary me-2 fs-3"></i>
+          <span>PPA <span class="text-primary">Cell</span></span>
+        </a>
+        
+        <!-- Toggle button for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Nav Links (Role-Aware) -->
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <!-- ADMIN NAV -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="currentUser && currentUser.role === 'admin'">
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'admin-dashboard' }" href="#admin-dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'admin-companies' }" href="#admin-companies">Companies</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'admin-students' }" href="#admin-students">Students</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'admin-drives' }" href="#admin-drives">Drives</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'admin-applications' }" href="#admin-applications">Applications</a>
+            </li>
+          </ul>
+
+          <!-- COMPANY NAV -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="currentUser && currentUser.role === 'company'">
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'company-dashboard' }" href="#company-dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'company-profile' }" href="#company-profile">Profile</a>
+            </li>
+          </ul>
+
+          <!-- STUDENT NAV -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" v-if="currentUser && currentUser.role === 'student'">
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'student-dashboard' }" href="#student-dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'student-drives' }" href="#student-drives">Browse Drives</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'student-applications' }" href="#student-applications">My Applications</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" :class="{ active: currentRoute === 'student-history' }" href="#student-history">History</a>
+            </li>
+          </ul>
+
+          <!-- Right Align Items (User details & Logout) -->
+          <div class="d-flex align-items-center gap-3 ms-auto" v-if="currentUser">
+            
+            <!-- Notifications Bell (Student & Company only) -->
+            <div class="dropdown me-2" v-if="currentUser.role === 'student' || currentUser.role === 'company'">
+              <a class="btn btn-outline-light border-0 position-relative p-2" href="#" role="button" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" @click="fetchNotifications">
+                <i class="bi bi-bell-fill fs-5"></i>
+                <span class="badge bg-danger notif-badge" v-if="unreadCount > 0">{{ unreadCount }}</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0" aria-labelledby="notifDropdown" style="width: 320px; border-radius: 12px; overflow: hidden; max-height: 400px;">
+                <li class="bg-light py-2 px-3 border-bottom d-flex justify-content-between align-items-center">
+                  <span class="fw-bold text-dark small">Notifications</span>
+                  <span class="badge bg-primary rounded-pill small">{{ unreadCount }} new</span>
+                </li>
+                <div style="overflow-y: auto; max-height: 320px;">
+                  <li v-for="n in notifications" :key="n.id" class="border-bottom list-group-item-action" :class="{ 'bg-light': !n.is_read }">
+                    <a class="dropdown-item py-3 px-3 d-flex align-items-start gap-2 text-wrap" href="#" @click.prevent="markAsRead(n.id)">
+                      <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-1" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-info-circle-fill font-size: 0.8rem;"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <p class="mb-0 text-dark small" style="line-height: 1.4;">{{ n.message }}</p>
+                        <span class="text-muted small" style="font-size: 0.75rem;">{{ formatTime(n.created_at) }}</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li v-if="notifications.length === 0" class="py-4 text-center text-muted small">
+                    <i class="bi bi-bell-slash d-block mb-1 fs-5"></i> No notifications.
+                  </li>
+                </div>
+              </ul>
+            </div>
+
+            <!-- Welcome User Name -->
+            <span class="text-white small d-none d-md-inline">
+              <i class="bi bi-person-circle me-1"></i> Hello, <strong class="text-primary">{{ currentUser.name }}</strong>
+            </span>
+
+            <!-- Logout -->
+            <button class="btn btn-outline-danger btn-sm px-3" @click="handleLogout" style="border-radius: 8px;">
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container my-5 flex-grow-1">
+      <div v-if="loadingRoute" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading page...</span>
+        </div>
+      </div>
+      
+      <!-- Component Rendering Area -->
+      <div v-show="!loadingRoute">
+        <component 
+          :is="activeComponent" 
+          :type="routeType" 
+          :param="routeParam"
+          @auth-success="onAuthSuccess"
+        ></component>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-4 mt-auto">
+      <div class="container text-center text-secondary small">
+        &copy; 2026 Institute Placement Portal. Single-page VueJS application.
+      </div>
+    </footer>
+    {% endraw %}
+  </div>
+
+  <!-- CDN Dependencies -->
+  <!-- VueJS 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Bootstrap 5 Bundle (with Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Import Frontend components -->
+  <script src="/frontend/components/Login.js"></script>
+  <script src="/frontend/components/Register.js"></script>
+  <script src="/frontend/components/AdminDashboard.js"></script>
+  <script src="/frontend/components/CompanyDashboard.js"></script>
+  <script src="/frontend/components/StudentDashboard.js"></script>
+  <script src="/frontend/components/ManageCompanies.js"></script>
+  <script src="/frontend/components/ManageStudents.js"></script>
+  <script src="/frontend/components/ManageDrives.js"></script>
+  <script src="/frontend/components/ManageApplications.js"></script>
+  <script src="/frontend/components/CreateDrive.js"></script>
+  <script src="/frontend/components/ViewApplications.js"></script>
+  <script src="/frontend/components/StudentProfile.js"></script>
+  <script src="/frontend/components/PlacementHistory.js"></script>
+  <script src="/frontend/components/DriveList.js"></script>
+
+  <!-- Core Mounting & SPA Router script -->
+  <script type="module">
+    const { createApp, ref, computed, onMounted, onBeforeUnmount } = Vue;
+
+    // Route map
+    const componentsMap = {
+      'login': window.LoginComponent,
+      'register': window.RegisterComponent,
+      'admin-dashboard': window.AdminDashboardComponent,
+      'admin-companies': window.ManageCompaniesComponent,
+      'admin-students': window.ManageStudentsComponent,
+      'admin-drives': window.ManageDrivesComponent,
+      'admin-applications': window.ManageApplicationsComponent,
+      'company-dashboard': window.CompanyDashboardComponent,
+      'company-profile': window.CompanyProfileComponent,
+      'company-create-drive': window.CreateDriveComponent,
+      'company-applications': window.ViewApplicationsComponent,
+      'student-dashboard': window.StudentDashboardComponent,
+      'student-profile': window.StudentProfileComponent,
+      'student-drives': window.DriveListComponent,
+      'student-applications': window.StudentDashboardComponent, // Reuses student dashboard list, or custom. Wait, student dashboard contains quick stats and recom. Under student applications we show detailed table (StudentDashboardComponent has a summary, but let's check Section 12: "PAGE: My Applications (/student/applications) - Table with Company, Job Title, Package, Applied Date, Status badge, Interview Date, Remarks. Export as CSV button"). Wait, My Applications page table is identical to StudentDashboard's recent applications but with full columns + CSV button. Let's make sure we handle student applications by showing a view of all their submissions. Let's map My Applications to another list, or we can inline it or let StudentDashboardComponent support a list view. Wait, actually, let's look at components listed in Section 2: "StudentDashboard.js", "StudentProfile.js", "PlacementHistory.js", "DriveList.js".
+      // Wait, where is My Applications page?
+      // Since My Applications page displays a table of applied drives, let's verify if we should just render StudentDashboardComponent or if we can handle it.
+      // Actually, wait! The list of components doesn't have a separate file for MyApplications.js. Oh, StudentDashboard has a summary. But wait, "My Applications" could be handled by StudentDashboard or DriveList, or we can make StudentDashboard support a toggle, or let StudentDashboard itself handle it.
+      // Wait, we can implement it as a route that is resolved inside StudentDashboard, or let StudentDashboard serve it.
+      // Let's look at the mapping: We will map 'student-applications' to a special template or let StudentDashboardComponent render the full applications list!
+      // Yes, StudentDashboardComponent can render the stats, list of applications, and the export CSV button. Let's map 'student-applications' to StudentDashboardComponent and add a parameter or state toggle so it renders the full table! That is extremely smart and fits Section 2 perfectly.
+      'student-history': window.PlacementHistoryComponent
+    };
+
+    const app = createApp({
+      setup() {
+        const currentUser = ref(null);
+        const isLoggedIn = ref(false);
+        const token = ref('');
+        const currentRoute = ref('login');
+        const routeType = ref(null); // 'student' or 'company' for register
+        const routeParam = ref(null); // parameter, e.g. drive ID
+        const loadingRoute = ref(false);
+        
+        // Notifications list
+        const notifications = ref([]);
+        const unreadCount = ref(0);
+        let pollingInterval = null;
+
+        // Resolve component based on currentRoute
+        const activeComponent = computed(() => {
+          return componentsMap[currentRoute.value] || window.LoginComponent;
+        });
+
+        // Set up Axios interceptors and global headers
+        const setupAxios = (jwtToken) => {
+          axios.defaults.baseURL = '/';
+          if (jwtToken) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwtToken;
+          } else {
+            delete axios.defaults.headers.common['Authorization'];
+          }
+        };
+
+        // Handle routing
+        const resolveRoute = () => {
+          loadingRoute.value = true;
+          const hash = window.location.hash.slice(1) || 'login';
+          const parts = hash.split('/');
+          const baseRoute = parts[0];
+          const param = parts[1] || null;
+
+          // Auth check
+          const savedToken = localStorage.getItem('ppa_token');
+          const savedUser = localStorage.getItem('ppa_user');
+
+          if (savedToken && savedUser) {
+            token.value = savedToken;
+            currentUser.value = JSON.parse(savedUser);
+            isLoggedIn.value = true;
+            setupAxios(savedToken);
+          } else {
+            token.value = '';
+            currentUser.value = null;
+            isLoggedIn.value = false;
+            setupAxios(null);
+          }
+
+          // Routing Guards
+          if (!isLoggedIn.value) {
+            if (baseRoute !== 'login' && !baseRoute.startsWith('register')) {
+              window.location.hash = '#login';
+              loadingRoute.value = false;
+              return;
+            }
+          } else {
+            // Already logged in
+            if (baseRoute === 'login' || baseRoute.startsWith('register')) {
+              window.location.hash = currentUser.value.role === 'admin' ? '#admin-dashboard' : 
+                                    currentUser.value.role === 'company' ? '#company-dashboard' : 
+                                    '#student-dashboard';
+              loadingRoute.value = false;
+              return;
+            }
+            
+            // Check roles
+            if (baseRoute.startsWith('admin') && currentUser.value.role !== 'admin') {
+              window.location.hash = '#login';
+              loadingRoute.value = false;
+              return;
+            }
+            if (baseRoute.startsWith('company') && currentUser.value.role !== 'company') {
+              window.location.hash = '#login';
+              loadingRoute.value = false;
+              return;
+            }
+            if (baseRoute.startsWith('student') && currentUser.value.role !== 'student') {
+              window.location.hash = '#login';
+              loadingRoute.value = false;
+              return;
+            }
+          }
+
+          // Apply path variables
+          if (baseRoute === 'register') {
+            currentRoute.value = 'register';
+            routeType.value = param; // student or company
+            routeParam.value = null;
+          } else {
+            currentRoute.value = baseRoute;
+            routeType.value = null;
+            routeParam.value = param;
+          }
+
+          loadingRoute.value = false;
+        };
+
+        const onAuthSuccess = (data) => {
+          token.value = data.token;
+          currentUser.value = data.user;
+          isLoggedIn.value = true;
+          setupAxios(data.token);
+          startPolling();
+        };
+
+        const handleLogout = () => {
+          localStorage.removeItem('ppa_token');
+          localStorage.removeItem('ppa_user');
+          token.value = '';
+          currentUser.value = null;
+          isLoggedIn.value = false;
+          setupAxios(null);
+          stopPolling();
+          window.location.hash = '#login';
+        };
+
+        const getHomeHash = () => {
+          if (!currentUser.value) return '#login';
+          return '#' + currentUser.value.role + '-dashboard';
+        };
+
+        // Notifications retrieval
+        const fetchNotifications = () => {
+          if (!isLoggedIn.value || (currentUser.value.role !== 'student' && currentUser.value.role !== 'company')) return;
+          
+          axios.get('/api/student/notifications')
+          .then(response => {
+            notifications.value = response.data.data.notifications;
+            unreadCount.value = response.data.data.unread_count;
+          })
+          .catch(() => {});
+        };
+
+        const markAsRead = (id) => {
+          axios.put(`/api/student/notifications/${id}/read`)
+          .then(() => {
+            fetchNotifications();
+          })
+          .catch(() => {});
+        };
+
+        const formatTime = (timeStr) => {
+          if (!timeStr) return '';
+          const d = new Date(timeStr);
+          return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) + ' - ' + d.toLocaleDateString();
+        };
+
+        const startPolling = () => {
+          stopPolling();
+          fetchNotifications();
+          // Poll notifications every 30 seconds
+          pollingInterval = setInterval(fetchNotifications, 30000);
+        };
+
+        const stopPolling = () => {
+          if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+          }
+        };
+
+        // Axios Global Interceptor for 401
+        axios.interceptors.response.use(
+          response => response,
+          error => {
+            if (error.response && error.response.status === 401) {
+              localStorage.removeItem('ppa_token');
+              localStorage.removeItem('ppa_user');
+              token.value = '';
+              currentUser.value = null;
+              isLoggedIn.value = false;
+              setupAxios(null);
+              stopPolling();
+              window.location.hash = '#login';
+            }
+            return Promise.reject(error);
+          }
+        );
+
+        onMounted(() => {
+          window.addEventListener('hashchange', resolveRoute);
+          resolveRoute();
+          if (isLoggedIn.value) {
+            startPolling();
+          }
+        });
+
+        onBeforeUnmount(() => {
+          window.removeEventListener('hashchange', resolveRoute);
+          stopPolling();
+        });
+
+        return {
+          currentUser,
+          isLoggedIn,
+          currentRoute,
+          routeType,
+          routeParam,
+          loadingRoute,
+          activeComponent,
+          unreadCount,
+          notifications,
+          onAuthSuccess,
+          handleLogout,
+          getHomeHash,
+          fetchNotifications,
+          markAsRead,
+          formatTime
+        };
+      }
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
