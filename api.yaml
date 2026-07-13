@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Placement Portal API - V2
+  description: API specifications for the V2 Campus Recruitment & Placement Portal (PPA V2).
+  version: 2.0.0
+servers:
+  - url: http://localhost:5000/api
+paths:
+  /auth/register/student:
+    post:
+      summary: Register a new student profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - confirm_password
+                - roll_number
+                - branch
+                - year
+                - cgpa
+                - phone
+              properties:
+                name: { type: string, example: "Shri Krishna Pandey" }
+                email: { type: string, format: email, example: "skpandey@onlinedegree.iitm.ac.in" }
+                password: { type: string, format: password, example: "student123" }
+                confirm_password: { type: string, format: password, example: "student123" }
+                roll_number: { type: string, example: "BS220001" }
+                branch: { type: string, example: "CSE" }
+                year: { type: integer, minimum: 1, maximum: 4, example: 3 }
+                cgpa: { type: number, format: float, example: 9.5 }
+                phone: { type: string, example: "9876543210" }
+      responses:
+        '201':
+          description: Student registered successfully.
+        '400':
+          description: Validation failure or user already exists.
+
+  /auth/register/company:
+    post:
+      summary: Register a new company account (Pending admin verification)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - confirm_password
+                - company_name
+                - hr_contact
+                - website
+                - location
+                - industry
+                - description
+              properties:
+                name: { type: string, example: "Jane Smith" }
+                email: { type: string, format: email, example: "recruiter@innovate.com" }
+                password: { type: string, format: password, example: "recruiter123" }
+                confirm_password: { type: string, format: password, example: "recruiter123" }
+                company_name: { type: string, example: "Innovate Ltd" }
+                hr_contact: { type: string, example: "9876543211" }
+                website: { type: string, example: "https://innovate.com" }
+                location: { type: string, example: "Bangalore" }
+                industry: { type: string, example: "IT / Software" }
+                description: { type: string, example: "Enterprise software development." }
+      responses:
+        '201':
+          description: Company registration submitted for admin approval.
+
+  /auth/login:
+    post:
+      summary: Authenticate credentials and issue JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email: { type: string, example: "admin@ppa.com" }
+                password: { type: string, example: "admin123" }
+      responses:
+        '200':
+          description: Auth success. Returns JWT access token.
+        '401':
+          description: Invalid credentials or inactive/blacklisted account.
+
+  /admin/stats:
+    get:
+      summary: Fetch placement stats for Admin Dashboard
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Return stats. Caching applied.
+
+  /company/drives:
+    post:
+      summary: Create a new placement drive (Requires Recruiter role)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - job_title
+                - job_description
+                - min_cgpa
+                - eligible_branches
+                - eligible_year
+                - package_lpa
+                - application_deadline
+              properties:
+                job_title: { type: string, example: "Backend Developer" }
+                job_description: { type: string, example: "Responsible for writing clean APIs." }
+                min_cgpa: { type: number, format: float, example: 8.0 }
+                eligible_branches: { type: string, example: "CSE,ECE" }
+                eligible_year: { type: string, example: "3" }
+                package_lpa: { type: number, format: float, example: 12.0 }
+                application_deadline: { type: string, format: date-time, example: "2026-07-20T18:00:00" }
+      responses:
+        '201':
+          description: Drive created successfully, pending admin approval.
+
+  /student/drives:
+    get:
+      summary: Retrieve active drives matching student branch and CGPA eligibility
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of qualified placement drives.
+
+  /student/profile:
+    put:
+      summary: Update student profile details (skills, education, experience)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - linkedin_url
+                - skills
+                - education
+                - experience
+              properties:
+                phone: { type: string, example: "9876543210" }
+                linkedin_url: { type: string, example: "https://linkedin.com/in/shrikrishna" }
+                skills: { type: string, example: "Flask, Vue, Python" }
+                education: { type: string, example: "IIT Madras BS Degree" }
+                experience: { type: string, example: "Course Instructor Assistant" }
+      responses:
+        '200':
+          description: Profile updated. Cache purged.
+
+  /student/history/export:
+    post:
+      summary: Queue background task to compile applications log to CSV and email it
+      security:
+        - BearerAuth: []
+      responses:
+        '202':
+          description: CSV compilation task successfully queued in Celery.
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
