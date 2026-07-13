@@ -72,6 +72,25 @@ def create_app(config_class=Config):
             return jsonify({"success": False, "error": "Not Found"}), 404
         return render_template('index.html')
 
+    # Automatically create tables and seed default admin on startup if they don't exist
+    with app.app_context():
+        db.create_all()
+        from backend.models import User
+        admin_exists = User.query.filter_by(role='admin').first()
+        if not admin_exists:
+            from werkzeug.security import generate_password_hash
+            admin_user = User(
+                name='Portal Administrator',
+                email='admin@ppa.com',
+                password_hash=generate_password_hash('admin123'),
+                role='admin',
+                is_active=True,
+                is_blacklisted=False
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Auto-seeded default admin account: admin@ppa.com / admin123")
+
     return app
 
 if __name__ == '__main__':
