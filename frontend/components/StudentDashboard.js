@@ -113,7 +113,18 @@ window.StudentDashboardComponent = {
                       <span class="fw-bold text-dark d-block" style="font-size: 0.95rem;">{{ app.job_title }}</span>
                       <span class="text-muted small">{{ app.company_name }}</span>
                     </div>
-                    <span class="badge" :class="getStatusBadgeClass(app.status)">{{ app.status }}</span>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge" :class="getStatusBadgeClass(app.status)">{{ app.status }}</span>
+                      <a 
+                        v-if="app.status && (app.status.toLowerCase() === 'offer' || app.status.toLowerCase() === 'placed')"
+                        :href="'/api/student/applications/' + app.id + '/offer-letter'" 
+                        target="_blank" 
+                        class="btn btn-xs btn-outline-primary py-0 px-2"
+                        style="font-size: 0.75rem; border-radius: 4px;"
+                      >
+                        <i class="bi bi-download"></i> Offer
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

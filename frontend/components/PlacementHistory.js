@@ -52,6 +52,18 @@ window.PlacementHistoryComponent = {
                 <strong class="text-dark d-block mb-1">Recruiter Notes:</strong>
                 <p class="mb-0 text-secondary">{{ entry.remarks }}</p>
               </div>
+
+              <!-- Offer Letter Download Button -->
+              <div v-if="entry.status && (entry.status.toLowerCase() === 'offer' || entry.status.toLowerCase() === 'placed')" class="mt-3">
+                <a 
+                  :href="'/api/student/applications/' + entry.id + '/offer-letter'" 
+                  target="_blank" 
+                  class="btn btn-sm btn-primary px-3 py-2 d-inline-flex align-items-center gap-2"
+                  style="border-radius: 6px; font-weight: 500;"
+                >
+                  <i class="bi bi-file-earmark-arrow-down-fill"></i> Download Offer Letter
+                </a>
+              </div>
             </div>
           </div>
         </div>
