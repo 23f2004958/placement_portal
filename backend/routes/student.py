@@ -423,29 +423,49 @@ def read_notification(id):
 @jwt_required()
 @student_required()
 def export_csv():
+    import io
+    import csv
+    from flask import make_response
+
     user_id = get_jwt_identity()
     user = User.query.get(int(user_id))
+    sp = user.student_profile
+    if not sp:
+        return jsonify({"success": False, "error": "Student profile not found"}), 404
+        
+    apps = sp.applications.all()
     
-    from backend.tasks.export_csv import export_student_applications
-    task = export_student_applications.delay(user.id, user.email)
+    output = io.StringIO()
+    writer = csv.writer(output)
     
-    return jsonify({
-        "success": True,
-        "data": {
-            "message": "Export started. You'll receive an email when done.",
-            "task_id": task.id
-        }
-    }), 202
-
-
-@student_bp.route('/export-status/<task_id>', methods=['GET'])
-@jwt_required()
-@student_required()
-def export_status(task_id):
-    res = AsyncResult(task_id)
-    return jsonify({
-        "success": True,
-        "data": {
-            "status": res.state
-        }
-    }), 200
+    headers = [
+        "Student ID", 
+        "Student Name", 
+        "Company Name", 
+        "Drive Title", 
+        "Application Date", 
+        "Application Status", 
+        "Package (LPA)"
+    ]
+    writer.writerow(headers)
+    
+    for app in apps:
+        company_name = app.drive.company.company_name if app.drive and app.drive.company else "Unknown"
+        drive_title = app.drive.title if app.drive else "Unknown"
+        app_date = app.date.strftime("%Y-%m-%d %H:%M:%S") if app.date else "N/A"
+        package = app.drive.salary if app.drive else 0.0
+        
+        writer.writerow([
+            sp.roll_number,
+            user.name,
+            company_name,
+            drive_title,
+            app_date,
+            app.status,
+            package
+        ])
+        
+    response = make_response(output.getvalue())
+    response.headers["Content-Disposition"] = f"attachment; filename=applications_history.csv"
+    response.headers["Content-type"] = "text/csv"
+    return response

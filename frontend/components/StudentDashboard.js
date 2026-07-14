@@ -261,16 +261,19 @@ window.StudentDashboardComponent = {
     },
     exportHistory() {
       this.exporting = true;
-      axios.post('/api/student/export-csv')
+      axios.post('/api/student/export-csv', {}, { responseType: 'blob' })
       .then(response => {
-        alert(response.data.data.message || 'Export started! You will receive an email shortly.');
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${this.profile.roll_number || 'student'}_applications_history.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        alert('Export completed successfully! Check your downloads folder.');
       })
       .catch(err => {
-        if (err.response && err.response.data && err.response.data.error) {
-          alert('Export error: ' + err.response.data.error);
-        } else {
-          alert('Failed to trigger export.');
-        }
+        alert('Failed to download CSV history.');
       })
       .finally(() => {
         this.exporting = false;
