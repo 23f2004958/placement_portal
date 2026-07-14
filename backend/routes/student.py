@@ -384,57 +384,6 @@ def get_history():
     return jsonify({"success": True, "data": apps}), 200
 
 
-@student_bp.route('/applications/<int:app_id>/offer-letter', methods=['GET'])
-@jwt_required()
-@student_required()
-def download_offer_letter(app_id):
-    user_id = get_jwt_identity()
-    user = User.query.get(int(user_id))
-    sp = user.student_profile
-    
-    app = Application.query.get(app_id)
-    if not app or app.student_id != sp.id:
-        return jsonify({"success": False, "error": "Application not found"}), 404
-        
-    if app.status not in ['Offer', 'Placed']:
-        return jsonify({"success": False, "error": "No offer has been issued for this application"}), 400
-        
-    letter_text = f"""
-===================================================
-             PLACEMENT OFFER LETTER
-===================================================
-
-Date: {datetime.utcnow().strftime('%Y-%m-%d')}
-To,
-{user.name}
-Roll Number: {sp.roll_number}
-Branch: {sp.branch}
-
-Subject: Offer of Placement for the Position of '{app.drive.title}'
-
-Dear {user.name},
-
-On behalf of {app.drive.company.company_name}, we are pleased to offer you placement in our organization as a '{app.drive.title}'.
-
-Details of the offer are as follows:
-- Company Name: {app.drive.company.company_name}
-- Position: {app.drive.title}
-- Salary: INR {app.drive.salary} LPA
-- Location: {app.drive.company.location or 'As per company policy'}
-
-Please review this document and indicate your acceptance. We look forward to having you on board.
-
-Warm Regards,
-Placement Portal Administration
-{app.drive.company.company_name} Recruitment Team
-
-===================================================
-    """
-    
-    response = make_response(letter_text)
-    response.headers["Content-Disposition"] = f"attachment; filename=offer_letter_{app.id}.txt"
-    response.headers["Content-type"] = "text/plain"
-    return response
 
 
 @student_bp.route('/notifications', methods=['GET'])
