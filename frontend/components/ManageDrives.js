@@ -62,8 +62,8 @@ window.ManageDrivesComponent = {
                     </a>
                   </td>
                   <td>{{ dr.company_name }}</td>
-                  <td class="fw-bold text-dark">{{ dr.package_lpa.toFixed(1) }} LPA</td>
-                  <td>{{ dr.min_cgpa.toFixed(2) }}</td>
+                  <td class="fw-bold text-dark">{{ dr.package_lpa !== undefined && dr.package_lpa !== null ? dr.package_lpa.toFixed(1) : '0.0' }} LPA</td>
+                  <td>{{ dr.min_cgpa !== undefined && dr.min_cgpa !== null ? dr.min_cgpa.toFixed(2) : '0.00' }}</td>
                   <td class="small" :class="isDeadlinePassed(dr.application_deadline) ? 'text-danger fw-semibold' : ''">
                     {{ formatDate(dr.application_deadline) }}
                   </td>
@@ -137,11 +137,11 @@ window.ManageDrivesComponent = {
               <div class="row mb-3">
                 <div class="col-md-4 mb-3">
                   <label class="text-secondary small fw-semibold">Package (LPA)</label>
-                  <p class="text-dark fw-bold mb-0 text-success fs-5">{{ selectedDrive.package_lpa.toFixed(1) }} LPA</p>
+                  <p class="text-dark fw-bold mb-0 text-success fs-5">{{ selectedDrive.package_lpa !== undefined && selectedDrive.package_lpa !== null ? selectedDrive.package_lpa.toFixed(1) : '0.0' }} LPA</p>
                 </div>
                 <div class="col-md-4 mb-3">
                   <label class="text-secondary small fw-semibold">Minimum CGPA</label>
-                  <p class="text-dark fw-bold mb-0 fs-5 text-indigo">{{ selectedDrive.min_cgpa.toFixed(2) }}</p>
+                  <p class="text-dark fw-bold mb-0 fs-5 text-indigo">{{ selectedDrive.min_cgpa !== undefined && selectedDrive.min_cgpa !== null ? selectedDrive.min_cgpa.toFixed(2) : '0.00' }}</p>
                 </div>
                 <div class="col-md-4 mb-3">
                   <label class="text-secondary small fw-semibold">Eligible Passing Year</label>
