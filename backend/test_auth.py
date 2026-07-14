@@ -83,7 +83,7 @@ def test_auth_flow():
         db.session.commit()
         print("Company approved in DB.")
 
-    # 7. Company Login (Should succeed now)
+    # 7. Company Login 
     print("\n--- Testing Company Login (Approved - Should Succeed) ---")
     resp = client.post('/api/auth/login', json={'email': 'company@ppa.com', 'password': 'password123'})
     print("Company Login Status:", resp.status_code)

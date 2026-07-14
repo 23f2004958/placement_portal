@@ -55,6 +55,20 @@ window.StudentDashboardComponent = {
                   </label>
                 </div>
               </div>
+
+              <!-- Export History Button -->
+              <div class="mt-3">
+                <button 
+                  class="btn btn-sm btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center" 
+                  @click="exportHistory"
+                  :disabled="exporting"
+                  style="border-radius: 8px; font-weight: 500;"
+                >
+                  <span v-if="exporting" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  <i class="bi bi-file-earmark-arrow-down-fill me-1" v-else></i>
+                  <span>{{ exporting ? 'Exporting...' : 'Export History (CSV)' }}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -166,6 +180,7 @@ window.StudentDashboardComponent = {
       recommended_drives: [],
       loading: false,
       uploading: false,
+      exporting: false,
       applyingId: null,
       error: ''
     };
@@ -242,6 +257,23 @@ window.StudentDashboardComponent = {
       .finally(() => {
         this.uploading = false;
         e.target.value = '';
+      });
+    },
+    exportHistory() {
+      this.exporting = true;
+      axios.post('/api/student/export-csv')
+      .then(response => {
+        alert(response.data.data.message || 'Export started! You will receive an email shortly.');
+      })
+      .catch(err => {
+        if (err.response && err.response.data && err.response.data.error) {
+          alert('Export error: ' + err.response.data.error);
+        } else {
+          alert('Failed to trigger export.');
+        }
+      })
+      .finally(() => {
+        this.exporting = false;
       });
     },
     getStatusBadgeClass(status) {
