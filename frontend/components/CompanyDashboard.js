@@ -120,9 +120,14 @@ window.CompanyDashboardComponent = {
                   </td>
                   <td class="text-center fw-semibold text-primary fs-5">{{ drv.applicant_count }}</td>
                   <td class="text-center">
-                    <a :href="'#company-applications/' + drv.id" class="btn btn-sm btn-outline-primary py-1 px-3">
-                      <i class="bi bi-eye me-1"></i> View Applicants
-                    </a>
+                    <div class="d-flex justify-content-center gap-2">
+                      <a :href="'#company-applications/' + drv.id" class="btn btn-sm btn-outline-primary py-1 px-2">
+                        <i class="bi bi-eye me-1"></i> View Applicants
+                      </a>
+                      <a :href="'#company-create-drive/' + drv.id" class="btn btn-sm btn-outline-secondary py-1 px-2">
+                        <i class="bi bi-pencil-square me-1"></i> Edit
+                      </a>
+                    </div>
                   </td>
                 </tr>
                 <tr v-if="loading">

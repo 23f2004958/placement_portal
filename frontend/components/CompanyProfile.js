@@ -29,16 +29,19 @@ window.CompanyProfileComponent = {
           </div>
 
           <form @submit.prevent="updateProfile" class="needs-validation" novalidate>
-            <!-- Read-only Company Name and email -->
             <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label text-secondary fw-semibold small">Company Name</label>
-                <input type="text" class="form-control bg-light" :value="profile.company_name" readonly>
+              <div class="col-md-4">
+                <label class="form-label text-secondary fw-semibold small">Company Name *</label>
+                <input type="text" class="form-control" v-model="profile.company_name" required>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
+                <label class="form-label text-secondary fw-semibold small">Contact Person Name *</label>
+                <input type="text" class="form-control" v-model="profile.contact_person" required>
+              </div>
+              <div class="col-md-4">
                 <label class="form-label text-secondary fw-semibold small">Approval Status</label>
                 <div class="form-control bg-light fw-semibold" :class="profile.approval_status === 'approved' ? 'text-success' : 'text-warning'">
-                  {{ profile.approval_status.toUpperCase() }}
+                  {{ profile.approval_status ? profile.approval_status.toUpperCase() : 'PENDING' }}
                 </div>
               </div>
             </div>
@@ -95,6 +98,7 @@ window.CompanyProfileComponent = {
     return {
       profile: {
         company_name: '',
+        contact_person: '',
         hr_contact: '',
         website: '',
         location: '',
@@ -130,7 +134,7 @@ window.CompanyProfileComponent = {
       this.successMsg = '';
       const p = this.profile;
 
-      if (!p.hr_contact || !p.website || !p.location || !p.industry || !p.description) {
+      if (!p.company_name || !p.contact_person || !p.hr_contact || !p.website || !p.location || !p.industry || !p.description) {
         this.error = 'All fields marked with * are required.';
         return;
       }
@@ -141,6 +145,8 @@ window.CompanyProfileComponent = {
 
       this.loading = true;
       axios.put('/api/company/profile', {
+        company_name: p.company_name,
+        contact_person: p.contact_person,
         hr_contact: p.hr_contact,
         website: p.website,
         location: p.location,

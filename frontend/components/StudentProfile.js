@@ -53,6 +53,17 @@ window.StudentProfileComponent = {
               <form @submit.prevent="saveProfile">
                 <div class="row">
                   <div class="col-md-6 mb-3">
+                    <label class="form-label text-secondary fw-semibold small">Full Name *</label>
+                    <input type="text" class="form-control" v-model="profile.name" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label text-secondary fw-semibold small">Roll Number *</label>
+                    <input type="text" class="form-control" v-model="profile.roll_number" required>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
                     <label class="form-label text-secondary fw-semibold small">Contact Phone (10 digits) *</label>
                     <input type="tel" class="form-control" v-model="profile.phone" required placeholder=" ">
                   </div>
@@ -128,6 +139,7 @@ window.StudentProfileComponent = {
   data() {
     return {
       profile: {
+        name: '',
         phone: '',
         linkedin_url: '',
         skills: '',
@@ -159,6 +171,7 @@ window.StudentProfileComponent = {
         this.studentName = u.name;
         if (p) {
           this.profile = {
+            name: u.name,
             phone: p.phone,
             linkedin_url: p.linkedin_url || '',
             skills: p.skills || '',
@@ -192,6 +205,8 @@ window.StudentProfileComponent = {
 
       this.loading = true;
       axios.put('/api/student/profile', {
+        name: this.profile.name,
+        roll_number: this.profile.roll_number,
         phone: this.profile.phone,
         linkedin_url: this.profile.linkedin_url,
         skills: this.profile.skills,

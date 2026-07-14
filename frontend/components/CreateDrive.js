@@ -1,4 +1,5 @@
 window.CreateDriveComponent = {
+  props: ['param'],
   template: `
     <div>
       <!-- Back button -->
@@ -10,8 +11,8 @@ window.CreateDriveComponent = {
 
       <div class="card border-0 shadow-sm mx-auto" style="max-width: 720px; border-radius: 16px;">
         <div class="card-body p-5">
-          <h3 class="fw-bold text-dark mb-1">Post Placement Drive</h3>
-          <p class="text-muted mb-4">Post a new job profile. Postings are pending admin approval before going live to students.</p>
+          <h3 class="fw-bold text-dark mb-1">{{ param ? 'Edit Placement Drive' : 'Post Placement Drive' }}</h3>
+          <p class="text-muted mb-4">{{ param ? 'Modify your placement drive details. Edits will reset status to pending and require re-approval.' : 'Post a new job profile. Postings are pending admin approval before going live to students.' }}</p>
 
           <div v-if="error" class="alert alert-danger py-2 small" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
@@ -109,7 +110,31 @@ window.CreateDriveComponent = {
       loading: false
     };
   },
+  mounted() {
+    if (this.param) {
+      this.fetchDrive();
+    }
+  },
   methods: {
+    fetchDrive() {
+      axios.get('/api/company/drives/' + this.param)
+      .then(response => {
+        const d = response.data.data;
+        this.form = {
+          job_title: d.title || d.job_title,
+          job_description: d.description || d.job_description,
+          min_cgpa: d.min_cgpa,
+          eligible_year: d.eligible_year || 'All',
+          package_lpa: d.salary || d.package_lpa,
+          drive_date: d.drive_date ? d.drive_date.slice(0, 16) : '',
+          application_deadline: d.deadline ? d.deadline.slice(0, 16) : ''
+        };
+        this.selectedBranches = d.eligible_branches ? d.eligible_branches.split(',') : [];
+      })
+      .catch(err => {
+        this.error = 'Failed to load placement drive details for editing.';
+      });
+    },
     handleSubmit() {
       this.error = '';
       const f = this.form;
@@ -144,18 +169,32 @@ window.CreateDriveComponent = {
       // Parse eligible year
       const eligibleYearVal = f.eligible_year === 'All' ? 'All' : parseInt(f.eligible_year);
 
-      axios.post('/api/company/drives', {
-        job_title: f.job_title,
-        job_description: f.job_description,
-        eligible_branches: branchesString,
-        min_cgpa: f.min_cgpa,
-        eligible_year: eligibleYearVal,
-        package_lpa: f.package_lpa,
-        application_deadline: f.application_deadline,
-        drive_date: f.drive_date || null
+      const requestConfig = this.param ? {
+        method: 'put',
+        url: '/api/company/drives/' + this.param,
+        successMsg: 'Placement drive updated successfully! Changes will require coordinator re-approval.'
+      } : {
+        method: 'post',
+        url: '/api/company/drives',
+        successMsg: 'Placement drive posted successfully! Coordinators will review and approve it shortly.'
+      };
+
+      axios({
+        method: requestConfig.method,
+        url: requestConfig.url,
+        data: {
+          job_title: f.job_title,
+          job_description: f.job_description,
+          eligible_branches: branchesString,
+          min_cgpa: f.min_cgpa,
+          eligible_year: eligibleYearVal,
+          package_lpa: f.package_lpa,
+          application_deadline: f.application_deadline,
+          drive_date: f.drive_date || null
+        }
       })
       .then(() => {
-        this.successMsg = 'Placement drive posted successfully! Coordinators will review and approve it shortly.';
+        this.successMsg = requestConfig.successMsg;
         setTimeout(() => {
           window.location.hash = '#company-dashboard';
         }, 3000);
@@ -164,7 +203,7 @@ window.CreateDriveComponent = {
         if (err.response && err.response.data && err.response.data.error) {
           this.error = err.response.data.error;
         } else {
-          this.error = 'Failed to create placement drive. Please try again.';
+          this.error = `Failed to ${this.param ? 'update' : 'create'} placement drive. Please try again.`;
         }
       })
       .finally(() => {

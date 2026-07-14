@@ -152,6 +152,12 @@ def update_profile():
 
     data = request.get_json() or {}
     
+    if 'name' in data and data['name'].strip():
+        user.name = data['name'].strip()
+
+    if 'roll_number' in data and data['roll_number'].strip():
+        sp.roll_number = data['roll_number'].strip()
+    
     if 'phone' in data:
         phone = str(data['phone'])
         if len(phone) != 10 or not phone.isdigit():
@@ -168,8 +174,8 @@ def update_profile():
             return jsonify({"success": False, "error": "CGPA must be a valid decimal number"}), 400
 
     sp.skills = data.get('skills', sp.skills)
-    sp.education = data.get('education', sp.education) # Added per V2 PRD
-    sp.experience = data.get('experience', sp.experience) # Added per V2 PRD
+    sp.education = data.get('education', sp.education)
+    sp.experience = data.get('experience', sp.experience)
     
     db.session.commit()
 

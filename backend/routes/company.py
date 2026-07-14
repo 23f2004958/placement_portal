@@ -115,7 +115,9 @@ def get_profile():
     cp = user.company_profile
     if not cp:
         return jsonify({"success": False, "error": "Company profile not found"}), 404
-    return jsonify({"success": True, "data": cp.to_dict()}), 200
+    res_data = cp.to_dict()
+    res_data['contact_person'] = user.name
+    return jsonify({"success": True, "data": res_data}), 200
 
 
 @company_bp.route('/profile', methods=['PUT'])
@@ -130,9 +132,14 @@ def update_profile():
 
     data = request.get_json() or {}
     
+    if 'contact_person' in data and data['contact_person'].strip():
+        user.name = data['contact_person'].strip()
+    if 'company_name' in data and data['company_name'].strip():
+        cp.company_name = data['company_name'].strip()
+
     cp.hr_contact = data.get('hr_contact', cp.hr_contact)
     cp.website = data.get('website', cp.website)
-    cp.location = data.get('location', cp.location) # Update location per V2 PRD
+    cp.location = data.get('location', cp.location)
     cp.industry = data.get('industry', cp.industry)
     cp.description = data.get('description', cp.description)
     
@@ -141,7 +148,26 @@ def update_profile():
     cache.delete("admin_dashboard")
     safe_delete_pattern("admin_companies*")
     
-    return jsonify({"success": True, "data": cp.to_dict()}), 200
+    res_data = cp.to_dict()
+    res_data['contact_person'] = user.name
+    return jsonify({"success": True, "data": res_data}), 200
+
+
+@company_bp.route('/drives/<int:drive_id>', methods=['GET'])
+@jwt_required()
+@company_required()
+def get_single_drive(drive_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(int(user_id))
+    cp = user.company_profile
+    if not cp:
+        return jsonify({"success": False, "error": "Company profile not found"}), 404
+        
+    drive = PlacementDrive.query.filter_by(id=drive_id, company_id=cp.id).first()
+    if not drive:
+        return jsonify({"success": False, "error": "Placement drive not found"}), 404
+        
+    return jsonify({"success": True, "data": drive.to_dict()}), 200
 
 
 @company_bp.route('/drives', methods=['POST'])
@@ -384,4 +410,76 @@ def update_application_status(id):
     cache.delete("admin_dashboard")
     safe_delete_pattern("admin_students*")
 
-    return jsonify({"success": True, "data": app.to_dict()}), 200
+    
+
+@company_bp.route('/drives/<int:drive_id>', methods=['PUT'])
+@jwt_required()
+@company_required()
+def edit_drive(drive_id):
+    from datetime import datetime
+    user_id = get_jwt_identity()
+    user = User.query.get(int(user_id))
+    cp = user.company_profile
+    if not cp:
+        return jsonify({"success": False, "error": "Company profile not found"}), 404
+        
+    drive = PlacementDrive.query.filter_by(id=drive_id, company_id=cp.id).first()
+    if not drive:
+        return jsonify({"success": False, "error": "Placement drive not found"}), 404
+
+    data = request.get_json() or {}
+    
+    job_title = data.get('job_title', data.get('title'))
+    job_description = data.get('job_description', data.get('description'))
+    min_cgpa = data.get('min_cgpa')
+    eligible_branches = data.get('eligible_branches')
+    eligible_year = data.get('eligible_year')
+    package_lpa = data.get('package_lpa', data.get('salary'))
+    deadline_str = data.get('application_deadline', data.get('deadline'))
+    drive_date_str = data.get('drive_date')
+    
+    if job_title:
+        drive.title = job_title
+    if job_description:
+        drive.description = job_description
+    if min_cgpa is not None:
+        try:
+            drive.min_cgpa = float(min_cgpa)
+        except ValueError:
+            return jsonify({"success": False, "error": "Minimum CGPA must be a valid float value"}), 400
+    if eligible_branches:
+        drive.eligible_branches = eligible_branches
+    if eligible_year:
+        drive.eligible_year = int(eligible_year)
+    if package_lpa is not None:
+        try:
+            drive.salary = float(package_lpa)
+        except ValueError:
+            return jsonify({"success": False, "error": "Package LPA must be a valid float value"}), 400
+            
+    if deadline_str:
+        try:
+            cleaned_str = deadline_str.replace('Z', '')
+            drive.deadline = datetime.fromisoformat(cleaned_str)
+        except ValueError:
+            return jsonify({"success": False, "error": "Invalid application deadline format"}), 400
+
+    if drive_date_str:
+        try:
+            cleaned_str = drive_date_str.replace('Z', '')
+            drive.drive_date = datetime.fromisoformat(cleaned_str)
+        except ValueError:
+            pass
+            
+    # Reset status to pending so admin must re-approve modified drive
+    drive.status = 'pending'
+    
+    db.session.commit()
+    
+    cache.delete("admin_dashboard")
+    safe_delete_pattern("admin_drives*")
+    safe_delete_pattern("student_drives*")
+    safe_delete_pattern("company_drives*")
+    
+    return jsonify({"success": True, "data": drive.to_dict()}), 200
+
