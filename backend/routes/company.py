@@ -449,8 +449,14 @@ def edit_drive(drive_id):
             return jsonify({"success": False, "error": "Minimum CGPA must be a valid float value"}), 400
     if eligible_branches:
         drive.eligible_branches = eligible_branches
-    if eligible_year:
-        drive.eligible_year = int(eligible_year)
+    if eligible_year is not None and eligible_year != '':
+        try:
+            if str(eligible_year).lower() == 'all':
+                drive.eligible_year = 0
+            else:
+                drive.eligible_year = int(eligible_year)
+        except ValueError:
+            return jsonify({"success": False, "error": "Eligible year must be a number or 'All'"}), 400
     if package_lpa is not None:
         try:
             drive.salary = float(package_lpa)
@@ -459,17 +465,15 @@ def edit_drive(drive_id):
             
     if deadline_str:
         try:
-            cleaned_str = deadline_str.replace('Z', '')
-            drive.deadline = datetime.fromisoformat(cleaned_str)
-        except ValueError:
-            return jsonify({"success": False, "error": "Invalid application deadline format"}), 400
+            drive.deadline = parse_datetime(deadline_str)
+        except ValueError as e:
+            return jsonify({"success": False, "error": str(e)}), 400
 
     if drive_date_str:
         try:
-            cleaned_str = drive_date_str.replace('Z', '')
-            drive.drive_date = datetime.fromisoformat(cleaned_str)
-        except ValueError:
-            pass
+            drive.drive_date = parse_datetime(drive_date_str)
+        except ValueError as e:
+            return jsonify({"success": False, "error": str(e)}), 400
             
     # Reset status to pending so admin must re-approve modified drive
     drive.status = 'pending'
