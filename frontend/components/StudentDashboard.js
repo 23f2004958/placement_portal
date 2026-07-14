@@ -35,6 +35,13 @@ window.StudentDashboardComponent = {
                     <strong class="text-primary">{{ profile.cgpa }} / 10.00</strong>
                   </div>
                 </div>
+
+                <!-- Edit Profile Button -->
+                <div class="mt-2 mb-3">
+                  <a href="#student-profile" class="btn btn-sm btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center" style="border-radius: 8px; font-weight: 500;">
+                    <i class="bi bi-pencil-square me-1"></i> Edit Profile Details
+                  </a>
+                </div>
               </div>
 
               <!-- Resume Upload Inline -->
