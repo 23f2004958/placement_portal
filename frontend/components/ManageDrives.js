@@ -35,6 +35,7 @@ window.ManageDrivesComponent = {
             <table class="table table-hover align-middle mb-0">
               <thead class="table-light">
                 <tr>
+                  <th style="width: 60px;">#</th>
                   <th @click="sort('job_title')" style="cursor: pointer;">
                     Job Title <i class="bi" :class="getSortIcon('job_title')"></i>
                   </th>
@@ -55,15 +56,16 @@ window.ManageDrivesComponent = {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="dr in sortedDrives" :key="dr.id">
+                <tr v-for="(dr, index) in sortedDrives" :key="dr.id">
+                  <td class="fw-semibold text-secondary">{{ index + 1 }}</td>
                   <td>
                     <a href="#" class="fw-bold text-primary text-decoration-none" @click.prevent="openDetailsModal(dr)">
-                      {{ dr.job_title }}
+                      {{ dr.job_title || 'N/A' }}
                     </a>
                   </td>
                   <td>{{ dr.company_name }}</td>
                   <td class="fw-bold text-dark">{{ dr.package_lpa !== undefined && dr.package_lpa !== null ? dr.package_lpa.toFixed(1) : '0.0' }} LPA</td>
-                  <td>{{ dr.min_cgpa !== undefined && dr.min_cgpa !== null ? dr.min_cgpa.toFixed(2) : '0.00' }}</td>
+                  <td class="fw-bold text-dark">{{ dr.min_cgpa !== undefined && dr.min_cgpa !== null ? dr.min_cgpa.toFixed(2) : '0.00' }}</td>
                   <td class="small" :class="isDeadlinePassed(dr.application_deadline) ? 'text-danger fw-semibold' : ''">
                     {{ formatDate(dr.application_deadline) }}
                   </td>
@@ -94,12 +96,12 @@ window.ManageDrivesComponent = {
                   </td>
                 </tr>
                 <tr v-if="loading && sortedDrives.length === 0">
-                  <td colspan="7" class="text-center py-4">
+                  <td colspan="8" class="text-center py-4">
                     <span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading...
                   </td>
                 </tr>
                 <tr v-if="!loading && sortedDrives.length === 0">
-                  <td colspan="7" class="text-center text-muted py-4">No placement drives found.</td>
+                  <td colspan="8" class="text-center text-muted py-4">No placement drives found.</td>
                 </tr>
               </tbody>
             </table>
